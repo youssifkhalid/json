@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced JSON Downloader</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <style>
+    body {
+      background: linear-gradient(135deg, #74ebd5, #9face6);
+      font-family: 'Arial', sans-serif;
+      color: #333;
+    }
+    .container {
+      margin-top: 50px;
+      max-width: 600px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      animation: fadeIn 1s ease-in-out;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #555;
+    }
+    .btn-primary {
+      background: linear-gradient(45deg, #6a11cb, #2575fc);
+      border: none;
+      transition: all 0.3s ease-in-out;
+    }
+    .btn-primary:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1><i class="fas fa-download"></i> JSON Downloader</h1>
+  
+  <!-- Input for URL -->
+  <div class="mb-3">
+    <label for="urlInput" class="form-label">Enter API URL:</label>
+    <input type="text" id="urlInput" class="form-control" placeholder="Enter JSON API URL">
+  </div>
+  
+  <!-- Input for File Name -->
+  <div class="mb-3">
+    <label for="fileNameInput" class="form-label">Enter File Name:</label>
+    <input type="text" id="fileNameInput" class="form-control" placeholder="Enter file name (without extension)">
+  </div>
+  
+  <!-- Download Button -->
+  <button id="download" class="btn btn-primary w-100">
+    <i class="fas fa-cloud-download-alt"></i> Download JSON
+  </button>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  document.getElementById("download").addEventListener("click", async () => {
+    const url = document.getElementById("urlInput").value.trim();
+    let fileName = document.getElementById("fileNameInput").value.trim();
+
+    if (!url) {
+      alert("Please enter a valid URL.");
+      return;
+    }
+
+    if (!fileName) {
+      fileName = "data"; // Default file name
+    }
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Error fetching data: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Create JSON Blob and Download
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${fileName}.json`;
+      link.click();
+
+      alert("File downloaded successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to fetch data. Please check the URL.");
+    }
+  });
+</script>
+</body>
+</html>
